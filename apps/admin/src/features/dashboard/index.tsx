@@ -7,10 +7,34 @@ import { RunningProjectsCard } from "./components/RunningProjectsCard";
 import { WorkDeadlinesTable } from "./components/WorkDeadlinesTable";
 import { LunoFooter } from "../../components/layout/LunoFooter";
 import { FloatingSupport } from "../../components/layout/FloatingSupport";
-import { Calendar, RotateCcw, Download } from "lucide-react";
+import { Calendar, RotateCcw, Download, Sparkles } from "lucide-react";
+import { useAuthStore } from "../../stores/auth.store";
+import { Role } from "@nbfc/shared-types";
 
 export const DashboardFeature: React.FC = () => {
-  const [dateRange] = useState("Aug 01, 2026 - Aug 16, 2026");
+  const [dateRange] = useState("Aug 01, 2026 - Aug 23, 2026");
+  const { user, role } = useAuthStore();
+  const currentRole = role || Role.SUPER_ADMIN;
+
+  const getSubheadline = () => {
+    switch (currentRole) {
+      case Role.STAFF:
+        return "You have 18 pending verification tasks, with 3 files approaching SLA deadline.";
+      case Role.CONNECTOR:
+        return "You have 42 referred leads with ₹ 32,000 pending commission awaiting payout.";
+      case Role.DSA:
+        return "45 active files in pipeline with ₹ 1.84 Cr disbursed volume across your team.";
+      case Role.BRANCH_MANAGER:
+        return "Kolkata Central Branch: 54 files active, daily sanction capacity at 86%.";
+      case Role.AREA_MANAGER:
+        return "West Bengal East Cluster: 8 branches active, target achievement running at 108%.";
+      case Role.COMPANY_ADMIN:
+        return "Arohon Financial Corporate: Nationwide loan book is compliant and active across 6 areas.";
+      case Role.SUPER_ADMIN:
+      default:
+        return "Real-time loan origination metrics across all 6 regions, 34 branches, and 184 partner DSAs.";
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-full overflow-hidden">
@@ -19,16 +43,19 @@ export const DashboardFeature: React.FC = () => {
         <div>
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs font-medium">
-            <span className="text-[#00d2b4] hover:underline cursor-pointer">Home</span>
-            <span className="text-slate-400 dark:text-slate-500">/ Dashboard</span>
+            <span className="text-[#00d2b4] hover:underline cursor-pointer">Arohon NBFC</span>
+            <span className="text-slate-400 dark:text-slate-500">/ {user?.roleLabel || "Dashboard"}</span>
           </div>
 
           {/* Heading & Subtitle */}
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1">
-            Welcome back, Allie!
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 flex items-center gap-2">
+            <span>Welcome back, {user?.name || "Allie"}!</span>
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+              {user?.roleLabel || "Super Admin"}
+            </span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            You have 12 new messages and 7 new notifications.
+            {getSubheadline()}
           </p>
         </div>
 
@@ -49,14 +76,14 @@ export const DashboardFeature: React.FC = () => {
               <Calendar className="w-3.5 h-3.5" />
             </button>
             <button
-              onClick={() => alert("Refreshed Dashboard Metrics")}
+              onClick={() => alert("Refreshed NBFC Operational Metrics")}
               className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-[#2a2e3f] hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Refresh Data"
             >
               <RotateCcw className="w-3.5 h-3.5" />
             </button>
             <button
-              onClick={() => alert("Downloading PDF / Excel Report")}
+              onClick={() => alert("Exporting PDF / Excel NBFC Portfolio Report")}
               className="p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-[#2a2e3f] hover:text-slate-900 dark:hover:text-white transition-colors"
               title="Export Report"
             >
@@ -66,7 +93,7 @@ export const DashboardFeature: React.FC = () => {
         </div>
       </div>
 
-      {/* 5. KPI Card Grid (5 Columns x 2 Rows = 10 Cards) */}
+      {/* 5. Role-Specific NBFC KPI Card Grid */}
       <LunoKPIGrid />
 
       {/* 6. Main Analytics Row (Two-Column Layout) */}

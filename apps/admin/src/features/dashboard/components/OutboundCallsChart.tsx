@@ -4,7 +4,7 @@ import { Maximize2, MoreHorizontal } from "lucide-react";
 export const OutboundCallsChart: React.FC = () => {
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
 
-  // Weekdays data: outbound calls (0-200) and contact rate (0-100%)
+  // Weekdays data: lead applications received (0-200) and qualification rate (0-100%)
   const weekData = [
     { day: "Mon", calls: 145, rate: 68 },
     { day: "Tue", calls: 180, rate: 74 },
@@ -39,9 +39,12 @@ export const OutboundCallsChart: React.FC = () => {
     <div className="bg-white dark:bg-[#171922] border border-slate-200/80 dark:border-[#252836] rounded-2xl p-5 lg:p-6 shadow-sm flex flex-col justify-between h-full">
       {/* Card Header */}
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#252836] pb-4">
-        <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
-          Outbound Calls &amp; Contact Rate per weekday
-        </h3>
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
+            Weekly Lead Inflow & Qualification Rate
+          </h3>
+          <span className="text-[10px] text-slate-400">Applications received vs credit-approved percentage</span>
+        </div>
         <div className="flex items-center gap-2">
           <button
             className="p-1.5 rounded-lg bg-slate-100 dark:bg-[#1f212c] hover:bg-slate-200 dark:hover:bg-[#282b3a] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -71,7 +74,7 @@ export const OutboundCallsChart: React.FC = () => {
             <div className="border-b border-slate-300 dark:border-slate-500 w-full" />
           </div>
 
-          {/* Left Y-axis (Outbound Calls) */}
+          {/* Left Y-axis (Received) */}
           <div className="absolute left-0 top-0 bottom-6 flex flex-col justify-between text-[10px] font-mono text-slate-400 dark:text-slate-500 pointer-events-none">
             <span>200</span>
             <span>150</span>
@@ -80,7 +83,7 @@ export const OutboundCallsChart: React.FC = () => {
             <span>0</span>
           </div>
 
-          {/* Right Y-axis (Contact Rate %) */}
+          {/* Right Y-axis (Qual Rate %) */}
           <div className="absolute right-0 top-0 bottom-6 flex flex-col justify-between text-[10px] font-mono text-teal-600 dark:text-[#00d2b4] pointer-events-none text-right font-bold">
             <span>100%</span>
             <span>75%</span>
@@ -139,7 +142,6 @@ export const OutboundCallsChart: React.FC = () => {
             {/* Line Points with Teal Badges */}
             {linePoints.map((pt, i) => (
               <g key={i}>
-                {/* Node circle */}
                 <circle
                   cx={pt.x}
                   cy={pt.y}
@@ -148,8 +150,6 @@ export const OutboundCallsChart: React.FC = () => {
                   stroke="#00d2b4"
                   strokeWidth="3"
                 />
-
-                {/* Attached Data Label */}
                 <g transform={`translate(${pt.x}, ${pt.y - 12})`}>
                   <rect
                     x="-16"
@@ -180,13 +180,15 @@ export const OutboundCallsChart: React.FC = () => {
       <div className="flex items-center justify-center gap-6 pt-3 border-t border-slate-200 dark:border-[#252836] text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded bg-blue-600" />
-          <span className="text-slate-600 dark:text-slate-400 font-medium">Outbound Calls</span>
+          <span className="text-slate-600 dark:text-slate-400 font-medium">Daily Leads Sourced</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-1 bg-teal-500 dark:bg-[#00d2b4] rounded-full" />
-          <span className="text-teal-600 dark:text-[#00d2b4] font-medium">Contact Rate (%)</span>
+          <span className="text-teal-600 dark:text-[#00d2b4] font-medium">Credit Qualification Rate (%)</span>
         </div>
       </div>
     </div>
   );
 };
+
+export default OutboundCallsChart;

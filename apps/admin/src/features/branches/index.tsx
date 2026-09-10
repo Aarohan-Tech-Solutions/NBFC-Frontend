@@ -30,8 +30,10 @@ export const BranchesFeature: React.FC = () => {
     name: "",
     area: "West Bengal East",
     manager: "Subhashis Roy",
-    managerEmail: "",
-    phone: "",
+    managerEmail: "subhashis.roy@nbfc.com",
+    companyApprovalEmail: "approvals.corporate@arohonloans.com",
+    areaApprovalEmail: "subir.c@nbfc.com",
+    phone: "+91 98302 34567",
     address: "",
     target: 25000000,
     status: "Active" as "Active" | "Inactive",
@@ -46,6 +48,8 @@ export const BranchesFeature: React.FC = () => {
         area: branch.area,
         manager: branch.manager,
         managerEmail: branch.managerEmail,
+        companyApprovalEmail: (branch as any).companyApprovalEmail || "approvals.corporate@arohonloans.com",
+        areaApprovalEmail: (branch as any).areaApprovalEmail || "area.head@nbfc.com",
         phone: branch.phone,
         address: branch.address,
         target: branch.target,
@@ -58,7 +62,9 @@ export const BranchesFeature: React.FC = () => {
         name: "",
         area: "West Bengal East",
         manager: "Subhashis Roy",
-        managerEmail: "",
+        managerEmail: "manager@nbfc.com",
+        companyApprovalEmail: "approvals.corporate@arohonloans.com",
+        areaApprovalEmail: "subir.c@nbfc.com",
         phone: "",
         address: "",
         target: 25000000,
@@ -142,7 +148,7 @@ export const BranchesFeature: React.FC = () => {
             {row.name}
           </div>
           <div className="text-[11px] text-slate-400">
-            Code: <span className="font-mono font-semibold">{row.code}</span>
+            Code: <span className="font-mono font-semibold text-blue-600">{row.code}</span>
           </div>
         </div>
       ),
@@ -211,7 +217,7 @@ export const BranchesFeature: React.FC = () => {
             className="text-xs text-blue-600"
             onClick={() => setSelectedBranchForDrawer(row)}
           >
-            Details
+            Details & KYC
           </Button>
           <Button
             size="sm"
@@ -230,7 +236,7 @@ export const BranchesFeature: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="Branch Management"
-        description="Directory of operating branches, facility documents, staff rosters, and monthly disbursement performance."
+        description="Directory of operating branches linked to Regional Areas, approval routing mail references, staff rosters, and monthly disbursement targets."
         action={
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => handleExport("excel")}>
@@ -263,7 +269,7 @@ export const BranchesFeature: React.FC = () => {
         </div>
 
         <span className="text-xs text-slate-500">
-          Showing {filtered.length} of {branches.length} branches
+          Showing {filtered.length} of {branches.length} operating branches
         </span>
       </div>
 
@@ -279,10 +285,14 @@ export const BranchesFeature: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingBranch ? "Edit Branch Details" : "Add New Branch Office"}
+        title={editingBranch ? "Edit Branch Details" : "Add Branch (Linked to Area & Approval Chain)"}
         className="max-w-xl"
       >
         <form onSubmit={handleSave} className="space-y-4">
+          <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-xs text-blue-800 dark:text-blue-200">
+            <span className="font-bold">Branch Approval Routing:</span> Branch creation is linked to an existing Regional Area and requires both Company Mail and Area Mail references.
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Branch Name"
@@ -324,6 +334,25 @@ export const BranchesFeature: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
+              label="Company Approval Mail Ref"
+              type="email"
+              placeholder="approvals.corporate@arohonloans.com"
+              value={formData.companyApprovalEmail}
+              onChange={(e) => setFormData({ ...formData, companyApprovalEmail: e.target.value })}
+              required
+            />
+            <Input
+              label="Area Manager Approval Mail Ref"
+              type="email"
+              placeholder="subir.c@nbfc.com"
+              value={formData.areaApprovalEmail}
+              onChange={(e) => setFormData({ ...formData, areaApprovalEmail: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
               label="Official Contact Phone"
               placeholder="+91 98302 34567"
               value={formData.phone}
@@ -355,7 +384,7 @@ export const BranchesFeature: React.FC = () => {
               Cancel
             </Button>
             <Button type="submit">
-              {editingBranch ? "Update Branch" : "Create Branch"}
+              {editingBranch ? "Update Branch" : "Create & Link Branch"}
             </Button>
           </div>
         </form>

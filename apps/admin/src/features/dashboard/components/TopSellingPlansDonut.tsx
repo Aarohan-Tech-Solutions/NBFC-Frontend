@@ -2,18 +2,20 @@ import React from "react";
 import { Maximize2, MoreHorizontal } from "lucide-react";
 
 export const TopSellingPlansDonut: React.FC = () => {
-  // 3 Donut segments: Plan 1 (48%), Plan 2 (32%), Plan 3 (20%)
-  const plans = [
-    { name: "Plan 1", pct: 48, amount: "$48,200", color: "#00d2b4", strokeDash: "48 100", offset: 0 },
-    { name: "Plan 2", pct: 32, amount: "$32,150", color: "#2563eb", strokeDash: "32 100", offset: -48 },
-    { name: "Plan 3", pct: 20, amount: "$20,100", color: "#8b5cf6", strokeDash: "20 100", offset: -80 },
+  const products = [
+    { name: "Personal Loans", pct: 48, amount: "₹ 48.2 Lakhs", color: "#00d2b4" },
+    { name: "Mortgage / LAP Loans", pct: 32, amount: "₹ 32.1 Lakhs", color: "#2563eb" },
+    { name: "Business & MSME", pct: 20, amount: "₹ 20.1 Lakhs", color: "#8b5cf6" },
   ];
 
   return (
     <div className="bg-white dark:bg-[#171922] border border-slate-200/80 dark:border-[#252836] rounded-2xl p-5 lg:p-6 shadow-sm flex flex-col justify-between h-full">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-[#252836] pb-4">
-        <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">Top Selling Plans</h3>
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">Loan Product Mix</h3>
+          <span className="text-[10px] text-slate-400">Disbursed volume distribution</span>
+        </div>
         <div className="flex items-center gap-2">
           <button
             className="p-1.5 rounded-lg bg-slate-100 dark:bg-[#1f212c] hover:bg-slate-200 dark:hover:bg-[#282b3a] text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -42,7 +44,7 @@ export const TopSellingPlansDonut: React.FC = () => {
               fill="none"
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
             />
-            {/* Plan 1 segment (Teal) */}
+            {/* Product 1 segment (Teal) */}
             <path
               stroke="#00d2b4"
               strokeWidth="4.5"
@@ -52,7 +54,7 @@ export const TopSellingPlansDonut: React.FC = () => {
               fill="none"
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
             />
-            {/* Plan 2 segment (Blue) */}
+            {/* Product 2 segment (Blue) */}
             <path
               stroke="#2563eb"
               strokeWidth="4.5"
@@ -62,7 +64,7 @@ export const TopSellingPlansDonut: React.FC = () => {
               fill="none"
               d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
             />
-            {/* Plan 3 segment (Purple) */}
+            {/* Product 3 segment (Purple) */}
             <path
               stroke="#8b5cf6"
               strokeWidth="4.5"
@@ -76,9 +78,9 @@ export const TopSellingPlansDonut: React.FC = () => {
 
           {/* Centered Hollow Label */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-2xl font-black text-slate-900 dark:text-white">$100.4k</span>
+            <span className="text-xl font-black text-slate-900 dark:text-white">₹ 1.00 Cr</span>
             <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">
-              Total Volume
+              Disbursed Volume
             </span>
           </div>
         </div>
@@ -86,7 +88,7 @@ export const TopSellingPlansDonut: React.FC = () => {
 
       {/* Legend Underneath */}
       <div className="space-y-2.5 pt-4 border-t border-slate-200 dark:border-[#252836] text-xs">
-        {plans.map((p) => (
+        {products.map((p) => (
           <div key={p.name} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: p.color }} />
@@ -102,3 +104,5 @@ export const TopSellingPlansDonut: React.FC = () => {
     </div>
   );
 };
+
+export default TopSellingPlansDonut;

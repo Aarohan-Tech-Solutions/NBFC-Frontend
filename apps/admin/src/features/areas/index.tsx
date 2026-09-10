@@ -10,6 +10,8 @@ interface AreaItem {
   name: string;
   code: string;
   state: string;
+  parentCompany: string;
+  companyReferenceMail: string;
   areaManager: string;
   managerEmail: string;
   managerPhone: string;
@@ -21,12 +23,12 @@ interface AreaItem {
 }
 
 const initialAreas: AreaItem[] = [
-  { id: "1", name: "West Bengal East", code: "WB-E", state: "West Bengal", areaManager: "Subir Chatterjee", managerEmail: "subir.c@nbfc.com", managerPhone: "+91 98301 11223", branchesCount: 8, activeDSAs: 42, target: 45000000, disbursed: 48500000, status: "Active" },
-  { id: "2", name: "Maharashtra South", code: "MH-S", state: "Maharashtra", areaManager: "Priya Deshmukh", managerEmail: "priya.d@nbfc.com", managerPhone: "+91 98203 45678", branchesCount: 12, activeDSAs: 58, target: 60000000, disbursed: 64200000, status: "Active" },
-  { id: "3", name: "Delhi NCR North", code: "DL-NCR", state: "Delhi NCR", areaManager: "Vikram Malhotra", managerEmail: "vikram.m@nbfc.com", managerPhone: "+91 98114 99887", branchesCount: 9, activeDSAs: 44, target: 50000000, disbursed: 47800000, status: "Active" },
-  { id: "4", name: "Karnataka Central", code: "KA-C", state: "Karnataka", areaManager: "Anand Murthy", managerEmail: "anand.m@nbfc.com", managerPhone: "+91 98451 33445", branchesCount: 7, activeDSAs: 38, target: 40000000, disbursed: 39500000, status: "Active" },
-  { id: "5", name: "Telangana West", code: "TS-W", state: "Telangana", areaManager: "Suresh Reddy", managerEmail: "suresh.r@nbfc.com", managerPhone: "+91 98490 55667", branchesCount: 6, activeDSAs: 30, target: 35000000, disbursed: 31200000, status: "Active" },
-  { id: "6", name: "Gujarat North", code: "GJ-N", state: "Gujarat", areaManager: "Hitesh Patel", managerEmail: "hitesh.p@nbfc.com", managerPhone: "+91 98250 77889", branchesCount: 5, activeDSAs: 26, target: 30000000, disbursed: 28400000, status: "Active" },
+  { id: "1", name: "West Bengal East", code: "WB-E", state: "West Bengal", parentCompany: "Arohon Financial Services Private Limited", companyReferenceMail: "compliance@arohonloans.com", areaManager: "Subir Chatterjee", managerEmail: "subir.c@nbfc.com", managerPhone: "+91 98301 11223", branchesCount: 8, activeDSAs: 42, target: 45000000, disbursed: 48500000, status: "Active" },
+  { id: "2", name: "Maharashtra South", code: "MH-S", state: "Maharashtra", parentCompany: "Arohon Financial Services Private Limited", companyReferenceMail: "compliance@arohonloans.com", areaManager: "Priya Deshmukh", managerEmail: "priya.d@nbfc.com", managerPhone: "+91 98203 45678", branchesCount: 12, activeDSAs: 58, target: 60000000, disbursed: 64200000, status: "Active" },
+  { id: "3", name: "Delhi NCR North", code: "DL-NCR", state: "Delhi NCR", parentCompany: "Arohon Financial Services Private Limited", companyReferenceMail: "compliance@arohonloans.com", areaManager: "Vikram Malhotra", managerEmail: "vikram.m@nbfc.com", managerPhone: "+91 98114 99887", branchesCount: 9, activeDSAs: 44, target: 50000000, disbursed: 47800000, status: "Active" },
+  { id: "4", name: "Karnataka Central", code: "KA-C", state: "Karnataka", parentCompany: "Arohon Financial Services Private Limited", companyReferenceMail: "compliance@arohonloans.com", areaManager: "Anand Murthy", managerEmail: "anand.m@nbfc.com", managerPhone: "+91 98451 33445", branchesCount: 7, activeDSAs: 38, target: 40000000, disbursed: 39500000, status: "Active" },
+  { id: "5", name: "Telangana West", code: "TS-W", state: "Telangana", parentCompany: "Arohon Financial Services Private Limited", companyReferenceMail: "compliance@arohonloans.com", areaManager: "Suresh Reddy", managerEmail: "suresh.r@nbfc.com", managerPhone: "+91 98490 55667", branchesCount: 6, activeDSAs: 30, target: 35000000, disbursed: 31200000, status: "Active" },
+  { id: "6", name: "Gujarat North", code: "GJ-N", state: "Gujarat", parentCompany: "Arohon Financial Services Private Limited", companyReferenceMail: "compliance@arohonloans.com", areaManager: "Hitesh Patel", managerEmail: "hitesh.p@nbfc.com", managerPhone: "+91 98250 77889", branchesCount: 5, activeDSAs: 26, target: 30000000, disbursed: 28400000, status: "Active" },
 ];
 
 export const AreasFeature: React.FC = () => {
@@ -41,16 +43,18 @@ export const AreasFeature: React.FC = () => {
     name: "",
     code: "",
     state: "West Bengal",
+    parentCompany: "Arohon Financial Services Private Limited",
+    companyReferenceMail: "compliance@arohonloans.com",
     areaManager: "Subir Chatterjee",
-    managerEmail: "",
-    managerPhone: "",
+    managerEmail: "subir.c@nbfc.com",
+    managerPhone: "+91 98301 11223",
     target: 30000000,
     status: "Active" as "Active" | "Inactive",
   });
 
   const tabs = [
-    { id: "all-areas", label: "All Regional Areas" },
-    { id: "performance", label: "Area Performance & Targets" },
+    { id: "all-areas", label: "Regional Areas Directory" },
+    { id: "performance", label: "Regional Targets & Achievements" },
   ];
 
   const handleOpenModal = (area?: AreaItem) => {
@@ -60,6 +64,8 @@ export const AreasFeature: React.FC = () => {
         name: area.name,
         code: area.code,
         state: area.state,
+        parentCompany: area.parentCompany,
+        companyReferenceMail: area.companyReferenceMail,
         areaManager: area.areaManager,
         managerEmail: area.managerEmail,
         managerPhone: area.managerPhone,
@@ -72,9 +78,11 @@ export const AreasFeature: React.FC = () => {
         name: "",
         code: "",
         state: "West Bengal",
-        areaManager: "Priya Deshmukh",
-        managerEmail: "",
-        managerPhone: "",
+        parentCompany: "Arohon Financial Services Private Limited",
+        companyReferenceMail: "compliance@arohonloans.com",
+        areaManager: "Subir Chatterjee",
+        managerEmail: "subir.c@nbfc.com",
+        managerPhone: "+91 98301 11223",
         target: 30000000,
         status: "Active",
       });
@@ -98,6 +106,8 @@ export const AreasFeature: React.FC = () => {
         name: formData.name,
         code: formData.code || `AR-${Math.floor(10 + Math.random() * 90)}`,
         state: formData.state,
+        parentCompany: formData.parentCompany,
+        companyReferenceMail: formData.companyReferenceMail,
         areaManager: formData.areaManager,
         managerEmail: formData.managerEmail || "manager@nbfc.com",
         managerPhone: formData.managerPhone || "+91 98765 00000",
@@ -117,6 +127,7 @@ export const AreasFeature: React.FC = () => {
       "Area Code": a.code,
       "Area Name": a.name,
       State: a.state,
+      "Parent Company": a.parentCompany,
       "Area Manager": a.areaManager,
       "Manager Email": a.managerEmail,
       "Manager Phone": a.managerPhone,
@@ -149,8 +160,17 @@ export const AreasFeature: React.FC = () => {
         <div>
           <div className="font-bold text-slate-900 dark:text-slate-100">{row.name}</div>
           <div className="text-[11px] text-slate-400">
-            Code: <span className="font-mono font-semibold">{row.code}</span> • {row.state}
+            Code: <span className="font-mono font-semibold text-blue-600">{row.code}</span> • {row.state}
           </div>
+        </div>
+      ),
+    },
+    {
+      header: "Parent Company",
+      accessorKey: (row: AreaItem) => (
+        <div>
+          <div className="font-medium text-slate-800 dark:text-slate-200 truncate max-w-[180px]">{row.parentCompany}</div>
+          <div className="text-[11px] text-slate-400 font-mono">{row.companyReferenceMail}</div>
         </div>
       ),
     },
@@ -228,14 +248,14 @@ export const AreasFeature: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="Area Management"
-        description="Configure regional zones, assign Area Managers, and track regional lending performance."
+        description="Configure regional operating zones linked to corporate parent company, appoint Area Managers, and track regional lending performance."
         action={
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => handleExport("excel")}>
               Export Excel
             </Button>
             <Button size="sm" onClick={() => handleOpenModal()}>
-              + Add New Area
+              + Add Regional Area
             </Button>
           </div>
         }
@@ -307,7 +327,7 @@ export const AreasFeature: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingArea ? "Edit Regional Area" : "Add New Regional Area"}
+        title={editingArea ? "Edit Regional Area" : "Add New Regional Area (Linked to Corporate)"}
       >
         <form onSubmit={handleSave} className="space-y-4">
           <Input
@@ -342,6 +362,23 @@ export const AreasFeature: React.FC = () => {
             />
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="Parent Company Name"
+              value={formData.parentCompany}
+              onChange={(e) => setFormData({ ...formData, parentCompany: e.target.value })}
+              required
+            />
+            <Input
+              label="Company Reference Mail Ref"
+              type="email"
+              placeholder="compliance@arohonloans.com"
+              value={formData.companyReferenceMail}
+              onChange={(e) => setFormData({ ...formData, companyReferenceMail: e.target.value })}
+              required
+            />
+          </div>
+
           <Select
             label="Assign Area Manager"
             value={formData.areaManager}
@@ -372,7 +409,7 @@ export const AreasFeature: React.FC = () => {
           </div>
 
           <Input
-            label="Monthly Disbursement Target (₹)"
+            label="Monthly Regional Disbursement Target (₹)"
             type="number"
             value={String(formData.target)}
             onChange={(e) => setFormData({ ...formData, target: Number(e.target.value) })}
@@ -384,7 +421,7 @@ export const AreasFeature: React.FC = () => {
               Cancel
             </Button>
             <Button type="submit">
-              {editingArea ? "Update Area" : "Create Area"}
+              {editingArea ? "Update Area" : "Create & Authorize Area"}
             </Button>
           </div>
         </form>

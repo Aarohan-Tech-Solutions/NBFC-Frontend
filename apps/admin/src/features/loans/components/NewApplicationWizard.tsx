@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Input, Select } from "@nbfc/ui";
-import { LoanType, LoanStatus } from "@nbfc/shared-types";
+import { LoanType, LoanStatus, getRequiredDocuments } from "@nbfc/shared-types";
 import { formatCurrency } from "../../../lib/formatters";
 
 interface NewApplicationWizardProps {
@@ -24,28 +24,30 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
     channel: "DSA",
     dsaName: "Apex Financial Solutions (DSA-1042)",
     branch: "Kolkata Central",
-    loanType: LoanType.HOME,
+    loanType: LoanType.MORTGAGE,
     amount: 4500000,
     tenureMonths: 240,
     interestRate: 8.65,
-    purpose: "Purchase of 3BHK residential apartment in Kolkata",
+    purpose: "Purchase / Mortgage against residential property in Kolkata",
     monthlyIncome: 145000,
-    employmentType: "Salaried",
+    employmentType: "salaried" as "salaried" | "self_employed",
     employer: "Tata Consultancy Services",
-    collateralType: "Residential Flat",
+    collateralType: "Residential Flat / Land",
     propertyValue: 6500000,
     propertyAddress: "Flat 4B, South City Towers, Kolkata 700068",
-    documentsChecked: {
-      aadhaar: true,
-      pan: true,
-      bankStmt: true,
-      salarySlips: true,
-      propertyRegistry: true,
-    },
+    coApplicantName: "Sunita Kapoor",
+    coApplicantRelationship: "Spouse & Co-Owner (Applicant C/O Applicant)",
+    coApplicantPhone: "+91 98300 55443",
+    coApplicantPan: "ABCPS1234D",
   });
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 5));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
+
+  const dynamicChecklist = getRequiredDocuments(formData.loanType, {
+    employmentType: formData.employmentType,
+    hasCoApplicant: Boolean(formData.coApplicantName),
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +65,8 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
       channel: formData.channel,
       dsaName: formData.channel === "DSA" ? formData.dsaName : "Direct / Staff",
       monthlyIncome: Number(formData.monthlyIncome),
+      coApplicantName: formData.coApplicantName,
+      coApplicantRelationship: formData.coApplicantRelationship,
       createdAt: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
     };
     onSubmit(newApp);
@@ -80,92 +84,89 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
       title={`Create Loan Application (Step ${step} of 5)`}
       className="max-w-2xl"
     >
-      {/* Wizard Step Indicator */}
-      <div className="flex items-center justify-between mb-6 border-b border-slate-100 dark:border-slate-800 pb-3 text-xs">
-        {["Customer", "Loan Terms", "Income", "Collateral", "Review"].map((label, idx) => {
-          const stepNum = idx + 1;
-          const isActive = step === stepNum;
-          const isDone = step > stepNum;
-
-          return (
-            <div key={label} className="flex items-center gap-1.5">
-              <span
-                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-[11px] ${
-                  isActive
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : isDone
-                    ? "bg-emerald-600 text-white"
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Step Indicator */}
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="flex items-center gap-2">
+            {[1, 2, 3, 4, 5].map((s) => (
+              <div
+                key={s}
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
+                  s === step
+                    ? "bg-blue-600 text-white ring-2 ring-blue-400/30"
+                    : s < step
+                    ? "bg-emerald-500 text-white"
                     : "bg-slate-100 dark:bg-slate-800 text-slate-400"
                 }`}
               >
-                {isDone ? "✓" : stepNum}
-              </span>
-              <span className={`hidden sm:inline font-semibold ${isActive ? "text-blue-600" : isDone ? "text-emerald-600" : "text-slate-400"}`}>
-                {label}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+                {s < step ? "✓" : s}
+              </div>
+            ))}
+          </div>
+          <span className="text-xs font-semibold text-slate-500">
+            {step === 1 && "Borrower Info"}
+            {step === 2 && "Loan Product & Terms"}
+            {step === 3 && "Income & Employment"}
+            {step === 4 && "Collateral & Co-Applicant (C/O)"}
+            {step === 5 && "Document Checklist"}
+          </span>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Step 1: Customer & Sourcing */}
+        {/* Step 1: Borrower Info */}
         {step === 1 && (
           <div className="space-y-4">
             <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Step 1: Borrower & Sourcing Channel Details
+              Step 1: Primary Applicant Details
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Borrower Full Name"
-                placeholder="e.g. Ramesh Chandra"
+                placeholder="e.g. Rahul Kapoor"
                 value={formData.customerName}
                 onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
                 required
               />
               <Input
-                label="Mobile Phone"
-                placeholder="+91 98765 43210"
+                label="Mobile Phone (OTP Verified)"
+                placeholder="+91 99887 76655"
                 value={formData.customerPhone}
                 onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
                 required
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Email ID"
+                type="email"
+                placeholder="applicant@gmail.com"
+                value={formData.customerEmail}
+                onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
+              />
               <Select
                 label="Sourcing Channel"
                 value={formData.channel}
                 onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
                 options={[
-                  { label: "DSA Partner", value: "DSA" },
+                  { label: "DSA Channel Partner", value: "DSA" },
                   { label: "Connector Referral", value: "Connector" },
-                  { label: "Direct Branch Walk-in", value: "Direct" },
-                  { label: "Website Digital Lead", value: "Website" },
-                ]}
-              />
-              <Select
-                label="Select DSA Partner"
-                value={formData.dsaName}
-                onChange={(e) => setFormData({ ...formData, dsaName: e.target.value })}
-                options={[
-                  { label: "Apex Financial Solutions", value: "Apex Financial Solutions (DSA-1042)" },
-                  { label: "Star Loans Consultancy", value: "Star Loans Consultancy (DSA-1098)" },
-                  { label: "Eastern Capital Partners", value: "Eastern Capital Partners (DSA-1120)" },
-                ]}
-              />
-              <Select
-                label="Processing Branch"
-                value={formData.branch}
-                onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                options={[
-                  { label: "Kolkata Central", value: "Kolkata Central" },
-                  { label: "Mumbai Nariman Point", value: "Mumbai Nariman Point" },
-                  { label: "Delhi Connaught Place", value: "Delhi Connaught Place" },
-                  { label: "Bengaluru Koramangala", value: "Bengaluru Koramangala" },
+                  { label: "Direct Branch Walk-In", value: "Direct" },
                 ]}
               />
             </div>
+
+            {formData.channel === "DSA" && (
+              <Select
+                label="Select Sourcing DSA Agency"
+                value={formData.dsaName}
+                onChange={(e) => setFormData({ ...formData, dsaName: e.target.value })}
+                options={[
+                  { label: "Apex Financial Solutions (DSA-1042)", value: "Apex Financial Solutions (DSA-1042)" },
+                  { label: "Eastern Capital Partners (DSA-1120)", value: "Eastern Capital Partners (DSA-1120)" },
+                  { label: "Star Loans Consultancy (DSA-1098)", value: "Star Loans Consultancy (DSA-1098)" },
+                ]}
+              />
+            )}
           </div>
         )}
 
@@ -173,7 +174,7 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
         {step === 2 && (
           <div className="space-y-4">
             <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Step 2: Loan Product, Scheme & Requested Terms
+              Step 2: Loan Product Configuration
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Select
@@ -235,11 +236,10 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
               <Select
                 label="Employment Type"
                 value={formData.employmentType}
-                onChange={(e) => setFormData({ ...formData, employmentType: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, employmentType: e.target.value as any })}
                 options={[
-                  { label: "Salaried", value: "Salaried" },
-                  { label: "Self-Employed Professional", value: "Self-Employed Professional" },
-                  { label: "Business Owner / Enterprise", value: "Business Owner" },
+                  { label: "Salaried", value: "salaried" },
+                  { label: "Self-Employed / Business Owner", value: "self_employed" },
                 ]}
               />
               <Input
@@ -260,15 +260,15 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
           </div>
         )}
 
-        {/* Step 4: Collateral / Asset (if secured) */}
+        {/* Step 4: Collateral / Asset & Co-Applicant */}
         {step === 4 && (
           <div className="space-y-4">
             <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Step 4: Security / Collateral & Valuation Details
+              Step 4: Security Collateral & Co-Applicant (C/O Details)
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
-                label="Collateral / Asset Description"
+                label="Collateral / Property Description"
                 placeholder="e.g. 3BHK Residential Flat"
                 value={formData.collateralType}
                 onChange={(e) => setFormData({ ...formData, collateralType: e.target.value })}
@@ -286,6 +286,28 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
               value={formData.propertyAddress}
               onChange={(e) => setFormData({ ...formData, propertyAddress: e.target.value })}
             />
+
+            {/* Co-Applicant Relationship Box */}
+            <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-800 space-y-3">
+              <span className="text-xs font-bold text-blue-900 dark:text-blue-200 block uppercase">
+                Co-Applicant Relationship (Applicant C/O Applicant)
+              </span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Input
+                  label="Co-Applicant / Guardian Name"
+                  placeholder="e.g. Sunita Kapoor (C/O Rahul Kapoor)"
+                  value={formData.coApplicantName}
+                  onChange={(e) => setFormData({ ...formData, coApplicantName: e.target.value })}
+                />
+                <Input
+                  label="Relationship to Borrower"
+                  placeholder="e.g. Spouse & Co-Owner / Father C/O"
+                  value={formData.coApplicantRelationship}
+                  onChange={(e) => setFormData({ ...formData, coApplicantRelationship: e.target.value })}
+                />
+              </div>
+            </div>
           </div>
         )}
 
@@ -293,7 +315,7 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
         {step === 5 && (
           <div className="space-y-4 text-xs">
             <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Step 5: Document Verification Checklist & Application Summary
+              Step 5: Dynamic Document Checklist ({formData.loanType.toUpperCase()})
             </h4>
 
             <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 space-y-2">
@@ -306,59 +328,50 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
                 <div>ROI: <span className="font-semibold text-slate-800 dark:text-slate-200">{formData.interestRate}%</span></div>
                 <div>Branch: <span className="font-semibold text-slate-800 dark:text-slate-200">{formData.branch}</span></div>
               </div>
+              {formData.coApplicantName && (
+                <div className="text-[11px] text-teal-600 dark:text-teal-400 font-semibold pt-1">
+                  Co-Applicant: {formData.coApplicantName} ({formData.coApplicantRelationship})
+                </div>
+              )}
             </div>
 
             <div className="space-y-2 pt-2">
-              <span className="font-bold text-slate-900 dark:text-slate-100 block">Uploaded Mandatory Documents:</span>
-              <div className="grid grid-cols-2 gap-2">
-                <label className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-blue-600 rounded" />
-                  <span>Aadhaar Card (Identity)</span>
-                </label>
-                <label className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-blue-600 rounded" />
-                  <span>PAN Card (Tax Identification)</span>
-                </label>
-                <label className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-blue-600 rounded" />
-                  <span>6-Month Bank Statement</span>
-                </label>
-                <label className="flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-blue-600 rounded" />
-                  <span>Salary Slips / ITR Forms</span>
-                </label>
+              <span className="font-bold text-slate-900 dark:text-slate-100 block">
+                Required Document Records ({dynamicChecklist.filter((d) => d.isMandatory).length} Mandatory):
+              </span>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto custom-scrollbar border border-slate-200 dark:border-slate-800 p-2 rounded-xl">
+                {dynamicChecklist.map((doc) => (
+                  <label key={doc.id} className="flex items-center gap-2 p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/40 rounded-lg">
+                    <input type="checkbox" defaultChecked={doc.isMandatory} className="w-4 h-4 text-blue-600 rounded" />
+                    <span className="font-medium text-slate-800 dark:text-slate-200">{doc.title}</span>
+                    {doc.isMandatory && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold ml-auto">
+                        Required
+                      </span>
+                    )}
+                  </label>
+                ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* Buttons */}
+        {/* Navigation Buttons */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
           {step > 1 ? (
-            <Button type="button" variant="outline" onClick={prevStep}>
-              &larr; Back
+            <Button type="button" variant="outline" size="sm" onClick={prevStep}>
+              &larr; Previous Step
             </Button>
           ) : (
-            <Button type="button" variant="ghost" onClick={onClose}>
-              Cancel
-            </Button>
+            <div />
           )}
 
           {step < 5 ? (
-            <Button
-              type="button"
-              onClick={() => {
-                if (step === 1 && !formData.customerName) {
-                  alert("Please enter customer name.");
-                  return;
-                }
-                nextStep();
-              }}
-            >
-              Continue to Step {step + 1} &rarr;
+            <Button type="button" size="sm" onClick={nextStep}>
+              Next Step &rarr;
             </Button>
           ) : (
-            <Button type="submit">
+            <Button type="submit" size="sm">
               Submit Loan Application
             </Button>
           )}
@@ -367,3 +380,5 @@ export const NewApplicationWizard: React.FC<NewApplicationWizardProps> = ({
     </Modal>
   );
 };
+
+export default NewApplicationWizard;

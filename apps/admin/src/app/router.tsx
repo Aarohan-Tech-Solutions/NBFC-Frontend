@@ -2,6 +2,9 @@ import { lazy, Suspense, useState, useEffect } from "react";
 import { createBrowserRouter, Navigate, Outlet, useLocation } from "react-router-dom";
 import { LunoSidebar } from "../components/layout/LunoSidebar";
 import { LunoHeader } from "../components/layout/LunoHeader";
+import { LoginPage } from "./Login";
+import { useAuthStore } from "../stores/auth.store";
+import { Role } from "@nbfc/shared-types";
 
 // Lazy-loaded feature entry points
 const DashboardFeature = lazy(() => import("../features/dashboard"));
@@ -25,6 +28,42 @@ const CMSFeature = lazy(() => import("../features/cms"));
 const SettingsFeature = lazy(() => import("../features/settings"));
 const SecurityFeature = lazy(() => import("../features/security"));
 
+// Role-Guard wrapper component for routes
+function RoleGuardedRoute({
+  allowedRoles,
+  children,
+}: {
+  allowedRoles: Role[];
+  children: React.ReactNode;
+}) {
+  const { role } = useAuthStore();
+  const currentRole = role || Role.SUPER_ADMIN;
+
+  if (!allowedRoles.includes(currentRole)) {
+    return (
+      <div className="bg-white dark:bg-[#171922] p-8 rounded-2xl border border-slate-200 dark:border-[#252836] text-center space-y-4 max-w-lg mx-auto my-12 shadow-sm">
+        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto text-xl font-black">
+          !
+        </div>
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+          Access Restricted for {currentRole.replace("_", " ").toUpperCase()}
+        </h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          Your current active role does not have operational permissions to access this administrative module.
+        </p>
+        <button
+          onClick={() => window.history.back()}
+          className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 transition-colors"
+        >
+          &larr; Go Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+
 function NBFCAdminShell() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -36,11 +75,9 @@ function NBFCAdminShell() {
   }, [location.pathname]);
 
   const toggleSidebar = () => {
-    // On mobile (< 1024px), toggle mobile overlay drawer
     if (window.innerWidth < 1024) {
       setIsMobileSidebarOpen((prev) => !prev);
     } else {
-      // On desktop (>= 1024px), toggle mini/expanded sidebar
       setIsSidebarCollapsed((prev) => !prev);
     }
   };
@@ -56,7 +93,7 @@ function NBFCAdminShell() {
         />
       )}
 
-      {/* Mini / Expanded Fixed Left Sidebar */}
+      {/* Mini / Expanded Left Sidebar */}
       <LunoSidebar
         isCollapsed={isSidebarCollapsed}
         isMobileOpen={isMobileSidebarOpen}
@@ -81,7 +118,7 @@ function NBFCAdminShell() {
             fallback={
               <div className="p-16 text-center text-slate-400 font-semibold text-xs flex items-center justify-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#00d2b4] animate-ping" />
-                <span>Loading NBFC CRM Module...</span>
+                <span>Loading NBFC Module...</span>
               </div>
             }
           >
@@ -93,29 +130,159 @@ function NBFCAdminShell() {
   );
 }
 
+const ALL_ROLES = [
+  Role.SUPER_ADMIN,
+  Role.COMPANY_ADMIN,
+  Role.AREA_MANAGER,
+  Role.BRANCH_MANAGER,
+  Role.DSA,
+  Role.CONNECTOR,
+  Role.STAFF,
+];
+
+const MGMT_ROLES = [
+  Role.SUPER_ADMIN,
+  Role.COMPANY_ADMIN,
+  Role.AREA_MANAGER,
+  Role.BRANCH_MANAGER,
+];
+
+const HQ_ROLES = [Role.SUPER_ADMIN, Role.COMPANY_ADMIN];
+
 export const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
   {
     path: "/",
     element: <NBFCAdminShell />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: "dashboard", element: <DashboardFeature /> },
-      { path: "users", element: <UsersFeature /> },
-      { path: "roles-permissions", element: <RolesPermissionsFeature /> },
-      { path: "company", element: <CompanyFeature /> },
-      { path: "areas", element: <AreasFeature /> },
-      { path: "branches", element: <BranchesFeature /> },
-      { path: "dsa", element: <DSAFeature /> },
-      { path: "connectors", element: <ConnectorsFeature /> },
-      { path: "customers", element: <CustomersFeature /> },
-      { path: "loans", element: <LoansFeature /> },
+      
+      {
+        path: "loans",
+        element: (
+          <RoleGuardedRoute allowedRoles={ALL_ROLES}>
+            <LoansFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "verification",
+        element: (
+          <RoleGuardedRoute
+            allowedRoles={[
+              Role.SUPER_ADMIN,
+              Role.COMPANY_ADMIN,
+              Role.AREA_MANAGER,
+              Role.BRANCH_MANAGER,
+              Role.STAFF,
+            ]}
+          >
+            <VerificationFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "areas",
+        element: (
+          <RoleGuardedRoute allowedRoles={HQ_ROLES}>
+            <AreasFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "branches",
+        element: (
+          <RoleGuardedRoute allowedRoles={[Role.SUPER_ADMIN, Role.COMPANY_ADMIN, Role.AREA_MANAGER]}>
+            <BranchesFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "dsa",
+        element: (
+          <RoleGuardedRoute allowedRoles={MGMT_ROLES}>
+            <DSAFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "connectors",
+        element: (
+          <RoleGuardedRoute allowedRoles={[...MGMT_ROLES, Role.DSA]}>
+            <ConnectorsFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "leads",
+        element: (
+          <RoleGuardedRoute allowedRoles={[...MGMT_ROLES, Role.DSA, Role.CONNECTOR]}>
+            <LeadsFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "customers",
+        element: (
+          <RoleGuardedRoute allowedRoles={MGMT_ROLES}>
+            <CustomersFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "disbursement",
+        element: (
+          <RoleGuardedRoute allowedRoles={MGMT_ROLES}>
+            <DisbursementFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "commissions",
+        element: (
+          <RoleGuardedRoute allowedRoles={[...MGMT_ROLES, Role.DSA, Role.CONNECTOR]}>
+            <CommissionsFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "reports",
+        element: (
+          <RoleGuardedRoute allowedRoles={MGMT_ROLES}>
+            <ReportsFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "company",
+        element: (
+          <RoleGuardedRoute allowedRoles={HQ_ROLES}>
+            <CompanyFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "users",
+        element: (
+          <RoleGuardedRoute allowedRoles={HQ_ROLES}>
+            <UsersFeature />
+          </RoleGuardedRoute>
+        ),
+      },
+      {
+        path: "roles-permissions",
+        element: (
+          <RoleGuardedRoute allowedRoles={HQ_ROLES}>
+            <RolesPermissionsFeature />
+          </RoleGuardedRoute>
+        ),
+      },
       { path: "documents", element: <DocumentsFeature /> },
-      { path: "verification", element: <VerificationFeature /> },
-      { path: "leads", element: <LeadsFeature /> },
       { path: "crm", element: <CRMFeature /> },
-      { path: "commissions", element: <CommissionsFeature /> },
-      { path: "disbursement", element: <DisbursementFeature /> },
-      { path: "reports", element: <ReportsFeature /> },
       { path: "cms", element: <CMSFeature /> },
       { path: "settings", element: <SettingsFeature /> },
       { path: "security", element: <SecurityFeature /> },

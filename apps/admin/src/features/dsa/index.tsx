@@ -38,6 +38,8 @@ export const DSAFeature: React.FC = () => {
     gstin: "",
     bankAccount: "",
     bankIfsc: "",
+    aadhaar: "",
+    selfieUploaded: true,
   });
 
   const handleOpenModal = (dsa?: DSAItem) => {
@@ -56,6 +58,8 @@ export const DSAFeature: React.FC = () => {
         gstin: dsa.gstin,
         bankAccount: dsa.bankAccount,
         bankIfsc: dsa.bankIfsc,
+        aadhaar: "XXXX-XXXX-8921",
+        selfieUploaded: true,
       });
     } else {
       setEditingDSA(null);
@@ -72,6 +76,8 @@ export const DSAFeature: React.FC = () => {
         gstin: "",
         bankAccount: "",
         bankIfsc: "",
+        aadhaar: "",
+        selfieUploaded: false,
       });
     }
     setIsModalOpen(true);
@@ -84,9 +90,10 @@ export const DSAFeature: React.FC = () => {
         prev.map((d) => (d.id === editingDSA.id ? { ...d, ...formData } : d))
       );
     } else {
+      const generatedDsaNum = Math.floor(1100 + Math.random() * 800);
       const newDSA: DSAItem = {
         id: String(Date.now()),
-        code: `DSA-${Math.floor(1100 + Math.random() * 800)}`,
+        code: `DSA-${generatedDsaNum}`,
         ...formData,
         kycStatus: "Pending",
         activeLoans: 0,
@@ -156,7 +163,7 @@ export const DSAFeature: React.FC = () => {
             {row.agencyName}
           </div>
           <div className="text-[11px] text-slate-400">
-            Code: <span className="font-mono font-semibold">{row.code}</span> • {row.contactPerson}
+            Code: <span className="font-mono font-semibold text-blue-600">{row.code}</span> • {row.contactPerson}
           </div>
         </div>
       ),
@@ -223,7 +230,7 @@ export const DSAFeature: React.FC = () => {
             className="text-xs text-blue-600"
             onClick={() => setSelectedDSAForDrawer(row)}
           >
-            Profile
+            Profile & KYC
           </Button>
           <Button
             size="sm"
@@ -242,7 +249,7 @@ export const DSAFeature: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         title="DSA Partner Management"
-        description="Onboard direct selling agents, verify KYC documents, manage partner tiering, and oversee commission payouts."
+        description="Onboard direct selling agents, verify KYC documents (PAN, Aadhaar, Bank, Selfie), manage partner tiering, and generate Connector Codes."
         action={
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={() => handleExport("excel")}>
@@ -263,9 +270,9 @@ export const DSAFeature: React.FC = () => {
           onChange={(e) => setTierFilter(e.target.value)}
           options={[
             { label: "All Tiers", value: "all" },
-            { label: "Platinum Tier", value: "Platinum" },
-            { label: "Gold Tier", value: "Gold" },
-            { label: "Silver Tier", value: "Silver" },
+            { label: "Platinum Tier (1.5%)", value: "Platinum" },
+            { label: "Gold Tier (1.25%)", value: "Gold" },
+            { label: "Silver Tier (1.0%)", value: "Silver" },
           ]}
         />
         <Select
@@ -303,24 +310,28 @@ export const DSAFeature: React.FC = () => {
         onExport={() => handleExport("csv")}
       />
 
-      {/* Onboard / Edit DSA Modal */}
+      {/* Onboard / Edit DSA Modal with KYC Chain */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={editingDSA ? "Edit DSA Partner Profile" : "Onboard New DSA Partner"}
+        title={editingDSA ? "Edit DSA Partner Profile" : "DSA Partner Onboarding & KYC Chain"}
         className="max-w-2xl"
       >
         <form onSubmit={handleSave} className="space-y-4">
+          <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-xs text-blue-800 dark:text-blue-200">
+            <span className="font-bold">Onboarding Process:</span> Mail ID, Phone, PAN, Name &rarr; Bank A/C & IFSC &rarr; Aadhaar &rarr; PAN Card &rarr; Selfie / Photo (Auto-generates Connector Code on approval).
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
-              label="Agency / Company Name"
+              label="Agency / Legal Entity Name"
               placeholder="e.g. Apex Financial Solutions"
               value={formData.agencyName}
               onChange={(e) => setFormData({ ...formData, agencyName: e.target.value })}
               required
             />
             <Input
-              label="Contact Person Name"
+              label="Authorized Contact Person Name"
               placeholder="e.g. Vikas Sharma"
               value={formData.contactPerson}
               onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
@@ -330,7 +341,7 @@ export const DSAFeature: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
-              label="Official Email"
+              label="Official Mail ID"
               type="email"
               placeholder="contact@agency.com"
               value={formData.email}
@@ -338,7 +349,7 @@ export const DSAFeature: React.FC = () => {
               required
             />
             <Input
-              label="Mobile Number"
+              label="Contact Phone / Mobile"
               placeholder="+91 98455 67890"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -347,6 +358,19 @@ export const DSAFeature: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Select
+              label="Assigned Regional Area"
+              value={formData.area}
+              onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+              options={[
+                { label: "West Bengal East", value: "West Bengal East" },
+                { label: "Maharashtra South", value: "Maharashtra South" },
+                { label: "Delhi NCR North", value: "Delhi NCR North" },
+                { label: "Karnataka Central", value: "Karnataka Central" },
+                { label: "Telangana West", value: "Telangana West" },
+                { label: "Gujarat North", value: "Gujarat North" },
+              ]}
+            />
             <Select
               label="Assigned Branch"
               value={formData.branch}
@@ -369,14 +393,6 @@ export const DSAFeature: React.FC = () => {
                 { label: "Silver (1.0%)", value: "Silver" },
               ]}
             />
-            <Input
-              label="Commission Rate (%)"
-              type="number"
-              step="0.05"
-              value={String(formData.commissionRate)}
-              onChange={(e) => setFormData({ ...formData, commissionRate: Number(e.target.value) })}
-              required
-            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -388,10 +404,11 @@ export const DSAFeature: React.FC = () => {
               required
             />
             <Input
-              label="GSTIN Number"
-              placeholder="e.g. 29ABCPV1234D1Z5"
-              value={formData.gstin}
-              onChange={(e) => setFormData({ ...formData, gstin: e.target.value.toUpperCase() })}
+              label="Owner Aadhaar Number"
+              placeholder="e.g. 1234-5678-8921"
+              value={formData.aadhaar}
+              onChange={(e) => setFormData({ ...formData, aadhaar: e.target.value })}
+              required
             />
           </div>
 
@@ -412,12 +429,47 @@ export const DSAFeature: React.FC = () => {
             />
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="GSTIN Number (Optional)"
+              placeholder="e.g. 29ABCPV1234D1Z5"
+              value={formData.gstin}
+              onChange={(e) => setFormData({ ...formData, gstin: e.target.value.toUpperCase() })}
+            />
+            <Input
+              label="Commission Rate (%)"
+              type="number"
+              step="0.05"
+              value={String(formData.commissionRate)}
+              onChange={(e) => setFormData({ ...formData, commissionRate: Number(e.target.value) })}
+              required
+            />
+          </div>
+
+          <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+            <div>
+              <span className="font-bold text-slate-800 dark:text-slate-200">Owner Live Selfie / Photo</span>
+              <p className="text-slate-400 text-[11px]">Geo-tagged webcam photo / document attachment</p>
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.selfieUploaded}
+                onChange={(e) => setFormData({ ...formData, selfieUploaded: e.target.checked })}
+                className="w-4 h-4 text-blue-600 rounded"
+              />
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                {formData.selfieUploaded ? "Photo Verified" : "Capture / Upload Photo"}
+              </span>
+            </label>
+          </div>
+
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
             <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
               Cancel
             </Button>
             <Button type="submit">
-              {editingDSA ? "Update DSA Partner" : "Complete Onboarding"}
+              {editingDSA ? "Update DSA Partner" : "Complete DSA Onboarding"}
             </Button>
           </div>
         </form>
