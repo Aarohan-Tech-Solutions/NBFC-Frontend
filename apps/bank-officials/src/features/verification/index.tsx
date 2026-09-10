@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { verificationApi } from "@nbfc/api-client";
-import { getRequiredDocuments } from "@nbfc/shared-types";
-
-import { formatCurrency } from "../../lib/formatters";
 import { exportToCSV } from "../../lib/exportUtils";
-import { Badge, Button, Tabs, Modal, Select } from "@nbfc/ui";
-import { Search, CheckCircle2, AlertTriangle, XCircle, FileText, Download } from "lucide-react";
+import { Badge, Button, Tabs, Modal } from "@nbfc/ui";
+import { Search, Download } from "lucide-react";
 
 export const OfficialVerificationFeature: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);

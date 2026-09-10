@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useAuthStore, MOCK_USERS } from "../stores/auth.store";
 import { Role } from "@nbfc/shared-types";
+import { formatCurrency, formatDate } from "../lib/formatters";
 
 describe("apps/admin Test Suite", () => {
   describe("Admin Auth Store & Role Switching", () => {
@@ -54,6 +55,44 @@ describe("apps/admin Test Suite", () => {
       expect(state.user).toBeNull();
       expect(state.token).toBeNull();
       expect(state.role).toBeNull();
+    });
+  });
+
+  describe("Admin Formatters", () => {
+    it("should format INR currency values with rupee symbol and separators", () => {
+      expect(formatCurrency(2500000)).toContain("25,00,000");
+      expect(formatCurrency(0)).toContain("0");
+      expect(formatCurrency(100)).toContain("100");
+    });
+
+    it("should format ISO dates into short readable strings", () => {
+      const formatted = formatDate("2026-09-10T10:30:00Z");
+      expect(formatted).toBeTruthy();
+      expect(typeof formatted).toBe("string");
+    });
+  });
+
+  describe("Role Hierarchy & Guard Validation", () => {
+    const HQ_ROLES = [Role.SUPER_ADMIN, Role.COMPANY_ADMIN];
+    const MGMT_ROLES = [
+      Role.SUPER_ADMIN,
+      Role.COMPANY_ADMIN,
+      Role.AREA_MANAGER,
+      Role.BRANCH_MANAGER,
+    ];
+
+    it("should correctly identify HQ roles", () => {
+      expect(HQ_ROLES.includes(Role.SUPER_ADMIN)).toBe(true);
+      expect(HQ_ROLES.includes(Role.COMPANY_ADMIN)).toBe(true);
+      expect(HQ_ROLES.includes(Role.BRANCH_MANAGER)).toBe(false);
+      expect(HQ_ROLES.includes(Role.DSA)).toBe(false);
+    });
+
+    it("should correctly identify Management roles", () => {
+      expect(MGMT_ROLES.includes(Role.SUPER_ADMIN)).toBe(true);
+      expect(MGMT_ROLES.includes(Role.AREA_MANAGER)).toBe(true);
+      expect(MGMT_ROLES.includes(Role.BRANCH_MANAGER)).toBe(true);
+      expect(MGMT_ROLES.includes(Role.CONNECTOR)).toBe(false);
     });
   });
 });

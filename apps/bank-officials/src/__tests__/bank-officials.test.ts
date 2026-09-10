@@ -69,4 +69,13 @@ describe("apps/bank-officials Test Suite", () => {
       expect(state.role).toBeNull();
     });
   });
+
+  describe("Official Role Sanction Limits", () => {
+    it("should enforce correct sanction limits per official level", () => {
+      expect(MOCK_OFFICIALS[Role.VERIFICATION_OFFICER].sanctionLimit).toBe(0);
+      expect(MOCK_OFFICIALS[Role.SENIOR_CREDIT_OFFICER].sanctionLimit).toBe(2500000);
+      expect(MOCK_OFFICIALS[Role.DISBURSEMENT_OFFICER].sanctionLimit).toBe(10000000);
+      expect(MOCK_OFFICIALS[Role.BRANCH_UNDERWRITING_HEAD].sanctionLimit).toBe(5000000);
+    });
+  });
 });
