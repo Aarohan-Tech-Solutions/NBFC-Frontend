@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { settingsApi } from "@nbfc/api-client";
 
-export async function fetchRolePermissions() {
-  const { data } = await adminApiClient.get("/roles-permissions");
-  return data;
+export async function fetchRolesPermissions() {
+  return settingsApi.getRolesAndPermissions();
 }

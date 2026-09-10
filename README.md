@@ -1,76 +1,110 @@
-# NBFC DSA Loan Management Platform - Frontend Monorepo
+# NBFC DSA & Lending Management System — 3-Panel Monorepo
 
-Production-grade monorepo setup for an NBFC DSA (Direct Selling Agent) Loan Management Platform built with **pnpm workspaces**, **Turborepo**, **Vite**, **React**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui**.
+Enterprise-grade, backend-agnostic frontend monorepo for an Indian NBFC loan origination, DSA distribution, and multi-tier bank credit appraisal & disbursement platform. Built with **pnpm workspaces**, **Turborepo**, **Vite**, **React 18**, **TypeScript**, **Tailwind CSS**, and **TanStack React Query**.
 
-## Monorepo Layout
+---
+
+## 🏛️ 3-Panel System Architecture
 
 ```text
-nbfc-frontend/
+NBFC-DSA-LOAN-SYSTEM/
 ├── apps/
-│   ├── admin/               # Internal dashboard (Company/Area/Branch/DSA/Connector/Staff roles)
-│   └── client/              # Customer-facing loan application portal
+│   ├── admin/               # Port 3000: Super Admin / Branch Mgr / Area Mgr / DSA / Connector Panel
+│   ├── client/              # Port 3001: Customer-facing loan application & status tracking portal
+│   └── bank-officials/      # Port 3002: Bank Underwriting, Field Verification, Sanction & Disbursement Desk
 ├── packages/
-│   ├── ui/                  # Shared component library (Button, Input, Select, Modal, DataTable, Badge, Tabs)
-│   ├── shared-types/        # Shared TS types, Enums & Zod schemas (Roles, LoanStatus, DocumentTypes, DTOs)
-│   ├── api-client/          # Shared typed API client layer (Axios instance + auth interceptors + endpoints)
-│   └── config/              # Shared TSConfig, ESLint, Tailwind & Prettier base configs
-├── package.json
-├── pnpm-workspace.yaml
-├── turbo.json
-└── README.md
+│   ├── ui/                  # Shared UI library (Button, Modal, DataTable, Skeleton, ErrorBoundary, etc.)
+│   ├── shared-types/        # Shared DTOs, Enums (Role, LoanStatus), Sanction & Adverse action schemas
+│   ├── api-client/          # Backend-Agnostic API Client (17 typed endpoint modules + Mock DB + Live Axios)
+│   └── config/              # Shared TSConfig, Tailwind, and PostCSS presets
+├── API_CONTRACT.md          # Full 9-domain backend API specification & JSON contracts
+├── Dockerfile               # Production multi-stage Docker build
+├── docker-compose.yml       # Production 3-port Nginx compose setup
+└── nginx.conf               # Multi-port SPA fallback & proxy routing
 ```
 
-## Quick Start
+### Application Panels & Ports
+
+| Panel | Workspace | Port | Primary User Personas & Responsibilities |
+| :--- | :--- | :--- | :--- |
+| **Admin & DSA** | `apps/admin` (`@nbfc/admin`) | `3000` | Super Admin, Company Admin, Area Manager, Branch Manager, DSA Partners, Lead Connectors, Operations Staff. Commercial pipeline, branch targets, DSA payouts, CRM, CMS. |
+| **Borrower Portal** | `apps/client` (`@nbfc/client`) | `3001` | Retail & MSME Borrowers. Self-service loan application, document vault upload, EMI calculator, live stage tracker. |
+| **Bank Officials** | `apps/bank-officials` (`@nbfc/bank-officials`) | `3002` | Senior Credit Officers, Field Verification Officers, Disbursement Managers, Branch Underwriting Heads. 360° credit appraisal, statutory sanction letter issuance, escrow release desk, adverse action notices. |
+
+---
+
+## 🔌 100% Backend-Agnostic Architecture
+
+This frontend is **100% backend-agnostic**:
+1. **Zero Raw HTTP String Calls in Feature Code**: All UI views consume strictly typed named functions exported from `@nbfc/api-client` (e.g. `loansApi.getLoans()`, `bankOfficialsApi.calculateSanction()`, `verificationApi.submitVerificationReview()`). No `fetch()` or `axios.get("/raw-path")` exists in feature components.
+2. **Instant Mock ⇄ Live Switching**: Toggle between realistic in-memory database simulation and live REST/GraphQL backends with a single environment variable:
+   ```bash
+   # .env
+   VITE_API_MODE=mock   # Uses stateful in-memory database with artificial latency simulation
+   # OR
+   VITE_API_MODE=live   # Connects to live backend with JWT auth headers, automatic 401 refresh & retries
+   VITE_API_BASE_URL=https://api.yourbank.com/api/v1
+   ```
+3. **Plug-and-Play Backend**: Swapping backends (REST, GraphQL, tRPC, Firebase) requires modifying **only** `packages/api-client`, never any UI code or feature components.
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 - **Node.js**: `>= 18.0.0`
 - **pnpm**: `>= 9.0.0`
 
-### Installation
-
-Install all workspace dependencies:
-
+### 1. Install Dependencies
 ```bash
 pnpm install
 ```
 
-### Running Applications
-
-To start both `admin` and `client` dev servers concurrently side by side:
-
+### 2. Run All 3 Panels Concurrently
 ```bash
 pnpm dev
 ```
+Open your browser to:
+- **Admin & DSA Panel**: [http://localhost:3000](http://localhost:3000)
+- **Borrower Portal**: [http://localhost:3001](http://localhost:3001)
+- **Bank Officials Desk**: [http://localhost:3002](http://localhost:3002)
 
-- **Admin Dashboard**: `http://localhost:3000` (or `http://localhost:5173`)
-- **Client Portal**: `http://localhost:3001` (or `http://localhost:5174`)
-
-### Build & Type Check
-
-Build all packages and apps:
-
+### 3. Run Automated Tests
 ```bash
-pnpm build
+pnpm test
 ```
+Runs comprehensive Vitest test suites across `@nbfc/api-client`, `@nbfc/admin`, `@nbfc/client`, and `@nbfc/bank-officials`.
 
-Run type checking across all workspaces:
-
+### 4. Run Monorepo Type Check
 ```bash
 pnpm type-check
 ```
 
-Run linting across all workspaces:
-
+### 5. Production Build
 ```bash
-pnpm lint
+pnpm build
 ```
 
-## Architecture Principles
+---
 
-1. **Feature-Based Architecture (`apps/admin` & `apps/client`)**:
-   - Each domain (e.g. `dsa`, `loans`, `verification`, `commissions`) owns its own components, hooks, api calls, and types.
-   - Cross-feature dependencies flow through shared `packages/`.
-2. **Role-Driven Navigation**:
-   - Admin sidebar is configured dynamically via `constants/nav-config.ts` mapping `Role` enum to allowed modules.
-3. **Shared API Layer**:
-   - `packages/api-client` encapsulates Axios instance, authorization headers, 401 refresh handler, and typed endpoint hooks.
+## 🐳 Docker Deployment
+
+To build and run all 3 panels in a unified containerized Nginx environment:
+
+```bash
+# Build & Start Container
+docker compose up -d --build
+
+# Check Running Container
+docker compose ps
+```
+Access the services at:
+- `http://localhost:3000` (Admin Panel)
+- `http://localhost:3001` (Customer Portal)
+- `http://localhost:3002` (Bank Official Desk)
+
+---
+
+## 📖 API Contract Specification
+
+For full details on payload structures, query filters, authentication flows, and error codes for backend integration, refer to [API_CONTRACT.md](./API_CONTRACT.md).

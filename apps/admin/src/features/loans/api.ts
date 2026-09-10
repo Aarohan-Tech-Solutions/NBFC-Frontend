@@ -1,7 +1,6 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { loansApi } from "@nbfc/api-client";
 import { Loan } from "@nbfc/shared-types";
 
 export async function fetchLoans(): Promise<Loan[]> {
-  const { data } = await adminApiClient.get<Loan[]>("/loans");
-  return data;
+  return loansApi.getLoans();
 }

@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { crmApi } from "@nbfc/api-client";
 
 export async function fetchCRMLogs() {
-  const { data } = await adminApiClient.get("/crm/logs");
-  return data;
+  return crmApi.getLogs();
 }

@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { dsaApi } from "@nbfc/api-client";
 
 export async function fetchDSAPartners() {
-  const { data } = await adminApiClient.get("/dsa");
-  return data;
+  return dsaApi.getDSAList();
 }

@@ -1,6 +1,5 @@
-import { clientPortalApiClient } from "../../lib/apiClient";
+import { loansApi } from "@nbfc/api-client";
 
 export async function fetchApplicationStatus(appNo: string) {
-  const { data } = await clientPortalApiClient.get(`/customer/applications/${appNo}/status`);
-  return data;
+  return loansApi.getApplicationStatus(appNo);
 }

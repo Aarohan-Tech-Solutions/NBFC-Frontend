@@ -1,10 +1,11 @@
-import { clientPortalApiClient } from "../../lib/apiClient";
+import { documentsApi } from "@nbfc/api-client";
 import { DocumentType } from "@nbfc/shared-types";
 
 export async function uploadDocument(docType: DocumentType, file: File) {
-  const { data } = await clientPortalApiClient.post("/documents/upload-s3", {
+  const presigned = await documentsApi.getPresignedUrl(docType, file.name);
+  return documentsApi.confirmUpload({
+    fileKey: presigned.fileKey,
     docType,
     fileName: file.name,
   });
-  return data;
 }

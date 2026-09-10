@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { areasApi } from "@nbfc/api-client";
 
 export async function fetchAreas() {
-  const { data } = await adminApiClient.get("/areas");
-  return data;
+  return areasApi.getAreas();
 }

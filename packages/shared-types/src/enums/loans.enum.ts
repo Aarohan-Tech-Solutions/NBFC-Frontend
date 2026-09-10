@@ -14,7 +14,9 @@ export enum LoanStatus {
   PENDING_VERIFICATION = "pending_verification",
   UNDER_REVIEW = "under_review",
   APPROVED = "approved",
+  SANCTIONED = "sanctioned",
   REJECTED = "rejected",
   DISBURSED = "disbursed",
   CLOSED = "closed",
 }
+

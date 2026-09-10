@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { settingsApi } from "@nbfc/api-client";
 
-export async function fetchAuditLogs() {
-  const { data } = await adminApiClient.get("/security/audit-logs");
-  return data;
+export async function fetchSecurityAuditLogs() {
+  return settingsApi.getAuditLogs();
 }

@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { leadsApi } from "@nbfc/api-client";
 
 export async function fetchLeads() {
-  const { data } = await adminApiClient.get("/leads");
-  return data;
+  return leadsApi.getLeads();
 }

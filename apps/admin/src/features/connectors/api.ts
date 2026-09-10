@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { connectorsApi } from "@nbfc/api-client";
 
 export async function fetchConnectors() {
-  const { data } = await adminApiClient.get("/connectors");
-  return data;
+  return connectorsApi.getConnectorsList();
 }

@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { verificationApi } from "@nbfc/api-client";
 
-export async function fetchVerificationQueue() {
-  const { data } = await adminApiClient.get("/verification/queue");
-  return data;
+export async function fetchVerificationTasks() {
+  return verificationApi.getVerificationTasks();
 }

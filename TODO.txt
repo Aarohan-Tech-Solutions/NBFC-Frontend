@@ -1,0 +1,218 @@
+🏢 Super Admin Dashboard
+Dashboard
+Dashboard Overview
+Today's Statistics
+Monthly Statistics
+Revenue Analytics
+Loan Analytics
+Branch Performance
+Recent Activities
+Notifications
+👤 User Management
+Users
+All Users
+Add User
+Edit User
+User Profile
+User Activity Log
+User Login History
+Roles & Permissions
+Super Admin
+Company Admin
+Area Manager
+Branch Manager
+DSA
+Connector
+Staff
+Permission Management
+🏢 Company Management
+Company Profile
+Company Settings
+Company Documents
+Company Logo
+Company Bank Details
+🌍 Area Management
+All Areas
+Add Area
+Edit Area
+Assign Area Manager
+Area Performance
+🏢 Branch Management
+All Branches
+Add Branch
+Edit Branch
+Branch Details
+Branch Documents
+Branch Users
+Branch Performance
+👨‍💼 DSA Management
+DSA List
+Add DSA
+Edit DSA
+DSA Profile
+DSA KYC
+DSA Documents
+DSA Performance
+DSA Commission
+DSA Login Access
+🤝 Connector Management
+Connector List
+Add Connector
+Edit Connector
+Connector Profile
+Connector KYC
+Connector Documents
+Connector Commission
+Connector Performance
+👥 Customer Management
+Customer List
+Add Customer
+Customer Profile
+Customer Documents
+Customer Timeline
+Loan History
+Follow-up History
+💰 Loan Management
+Loan Applications
+New Application
+Draft
+Submitted
+Pending Verification
+Under Review
+Approved
+Rejected
+Disbursed
+Closed
+Loan Types
+Personal Loan
+Mortgage Loan
+Home Loan
+Business Loan
+Car Loan
+Education Loan
+Gold Loan
+📂 Document Management
+KYC Documents
+Aadhaar
+PAN
+Selfie
+Address Proof
+Photo
+Financial Documents
+Bank Statement
+Salary Slip
+GST
+MSME
+ITR
+Trade License
+Property Documents
+Registry
+Mutation
+Property Tax
+Electric Bill
+Estimate Report
+Vehicle Documents
+RC Book
+Insurance
+Tax Token
+Driving Licence
+✅ Verification Module
+KYC Verification
+Document Verification
+Bank Verification
+Property Verification
+Guarantor Verification
+Verification Remarks
+📞 Lead Management
+Website Leads
+DSA Leads
+Connector Leads
+Manual Leads
+Lead Assignment
+Lead Status
+Lead Follow-up
+Lead Timeline
+📅 Follow-up CRM
+Call Logs
+WhatsApp Logs
+Email Logs
+Meeting Schedule
+Reminder
+Notes
+💵 Commission Management
+DSA Commission
+Pending
+Paid
+History
+Connector Commission
+Pending
+Paid
+History
+💳 Disbursement Module
+Disbursement List
+Bank Details
+Transaction ID
+Payment Status
+Payment History
+📊 Reports
+Loan Reports
+Daily
+Weekly
+Monthly
+Yearly
+Branch Reports
+DSA Reports
+Connector Reports
+Customer Reports
+Commission Reports
+Revenue Reports
+Rejection Reports
+Export:
+PDF
+Excel
+CSV
+
+
+
+
+
+📰 CMS Management
+Homepage Banner
+About Us
+Loan Services
+Blogs
+FAQ
+Testimonials
+Contact Information
+⚙️ Settings
+General Settings
+Company Information
+Logo
+Favicon
+Timezone
+Currency
+Email Settings
+SMTP
+SMS Settings
+WhatsApp API
+Google Maps API
+Backup Settings
+System Settings
+🔐 Security
+Login History
+Audit Logs
+Activity Logs
+Failed Login Attempts
+IP Management
+Session Management
+🛠 Masters
+Loan Types
+Banks
+Interest Rates
+States
+Districts
+Cities
+Pincodes
+Occupations
+Income Sources
+Document Types

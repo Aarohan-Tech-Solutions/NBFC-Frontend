@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { branchesApi } from "@nbfc/api-client";
 
 export async function fetchBranches() {
-  const { data } = await adminApiClient.get("/branches");
-  return data;
+  return branchesApi.getBranches();
 }

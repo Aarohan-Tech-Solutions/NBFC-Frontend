@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { disbursementApi } from "@nbfc/api-client";
 
 export async function fetchDisbursements() {
-  const { data } = await adminApiClient.get("/disbursement");
-  return data;
+  return disbursementApi.getDisbursements();
 }

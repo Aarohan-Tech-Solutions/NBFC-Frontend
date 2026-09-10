@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { settingsApi } from "@nbfc/api-client";
 
 export async function fetchCompanyProfile() {
-  const { data } = await adminApiClient.get("/company/profile");
-  return data;
+  return settingsApi.getCompanyProfile();
 }

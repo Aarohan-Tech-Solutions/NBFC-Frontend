@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { reportsApi } from "@nbfc/api-client";
 
 export async function fetchReports() {
-  const { data } = await adminApiClient.get("/reports");
-  return data;
+  return reportsApi.getPortfolioSummary();
 }

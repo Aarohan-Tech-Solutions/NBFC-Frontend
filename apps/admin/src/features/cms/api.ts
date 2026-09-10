@@ -1,6 +1,5 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { settingsApi } from "@nbfc/api-client";
 
 export async function fetchCMSContent() {
-  const { data } = await adminApiClient.get("/cms/content");
-  return data;
+  return settingsApi.getCMSContent();
 }

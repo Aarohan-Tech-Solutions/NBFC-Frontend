@@ -72,8 +72,13 @@ export const LunoHeader: React.FC<LunoHeaderProps> = ({
     [Role.DSA]: Users,
     [Role.CONNECTOR]: UserCheck,
     [Role.STAFF]: FileCheck2,
+    [Role.SENIOR_CREDIT_OFFICER]: FileCheck2,
+    [Role.VERIFICATION_OFFICER]: ShieldCheck,
+    [Role.DISBURSEMENT_OFFICER]: Building,
+    [Role.BRANCH_UNDERWRITING_HEAD]: ShieldCheck,
     [Role.CUSTOMER]: Users,
   };
+
 
   const currentRole = role || Role.SUPER_ADMIN;
   const CurrentRoleIcon = roleIcons[currentRole] || ShieldCheck;

@@ -1,7 +1,6 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { commissionsApi } from "@nbfc/api-client";
 import { Commission } from "@nbfc/shared-types";
 
 export async function fetchCommissions(): Promise<Commission[]> {
-  const { data } = await adminApiClient.get<Commission[]>("/commissions");
-  return data;
+  return commissionsApi.getCommissions();
 }

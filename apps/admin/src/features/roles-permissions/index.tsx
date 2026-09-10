@@ -111,6 +111,50 @@ const defaultRolePermissions: RolePermissionsMap = {
       export: false,
     },
   })),
+  [Role.SENIOR_CREDIT_OFFICER]: baseModules.map((m) => ({
+    ...m,
+    permissions: {
+      view: ["dashboard", "loans", "customers", "documents", "verification", "reports"].includes(m.moduleId),
+      create: ["loans", "verification", "documents"].includes(m.moduleId),
+      edit: ["loans", "verification", "documents"].includes(m.moduleId),
+      delete: false,
+      approve: ["loans", "verification"].includes(m.moduleId),
+      export: ["loans", "reports"].includes(m.moduleId),
+    },
+  })),
+  [Role.VERIFICATION_OFFICER]: baseModules.map((m) => ({
+    ...m,
+    permissions: {
+      view: ["dashboard", "loans", "customers", "documents", "verification"].includes(m.moduleId),
+      create: ["verification", "documents"].includes(m.moduleId),
+      edit: ["verification", "documents"].includes(m.moduleId),
+      delete: false,
+      approve: ["verification"].includes(m.moduleId),
+      export: false,
+    },
+  })),
+  [Role.DISBURSEMENT_OFFICER]: baseModules.map((m) => ({
+    ...m,
+    permissions: {
+      view: ["dashboard", "loans", "disbursement", "reports"].includes(m.moduleId),
+      create: ["disbursement"].includes(m.moduleId),
+      edit: ["disbursement"].includes(m.moduleId),
+      delete: false,
+      approve: ["disbursement"].includes(m.moduleId),
+      export: ["disbursement", "reports"].includes(m.moduleId),
+    },
+  })),
+  [Role.BRANCH_UNDERWRITING_HEAD]: baseModules.map((m) => ({
+    ...m,
+    permissions: {
+      view: ["dashboard", "loans", "customers", "documents", "verification", "disbursement", "reports"].includes(m.moduleId),
+      create: ["loans", "verification", "documents"].includes(m.moduleId),
+      edit: ["loans", "verification", "documents"].includes(m.moduleId),
+      delete: false,
+      approve: true,
+      export: true,
+    },
+  })),
   [Role.CUSTOMER]: baseModules.map((m) => ({
     ...m,
     permissions: {
@@ -128,12 +172,17 @@ const roleDescriptions: Record<Role, { title: string; desc: string; userCount: n
   [Role.SUPER_ADMIN]: { title: "Super Admin", desc: "Supreme executive access across all branches, policy parameters, financial approvals, and security audits.", userCount: 3, badgeVariant: "danger" },
   [Role.COMPANY_ADMIN]: { title: "Company Admin", desc: "Corporate headquarters administration, organization-wide policy settings, and executive reporting.", userCount: 5, badgeVariant: "warning" },
   [Role.AREA_MANAGER]: { title: "Area Manager", desc: "Supervises multi-branch clusters within assigned regional territories, monitors DSA onboarding and quota targets.", userCount: 12, badgeVariant: "info" },
-  [Role.BRANCH_MANAGER]: { title: "Branch Manager", desc: "Controls branch staff operations, credit underwriting queue, and loan sanctioning up to designated ticket threshold.", userCount: 28, badgeVariant: "info" },
+  [Role.BRANCH_MANAGER]: { title: "Branch Manager", desc: "Commercial branch operations, sales targets, DSA/Connector management, and branch team administration.", userCount: 28, badgeVariant: "info" },
+  [Role.SENIOR_CREDIT_OFFICER]: { title: "Senior Credit Officer", desc: "Underwriting evaluation, credit score assessment, FOIR/LTV calculations, and appraisal note preparation.", userCount: 18, badgeVariant: "info" },
+  [Role.VERIFICATION_OFFICER]: { title: "Verification Officer", desc: "Field inspections, KYC validation, property title searches, and guarantor checks.", userCount: 32, badgeVariant: "info" },
+  [Role.DISBURSEMENT_OFFICER]: { title: "Disbursement Officer", desc: "Escrow account fund transfers, fee deductions, and RTGS/NEFT transaction authorization.", userCount: 14, badgeVariant: "info" },
+  [Role.BRANCH_UNDERWRITING_HEAD]: { title: "Branch Underwriting Head", desc: "Branch credit delegation authority, policy exception approvals, and final loan sanctioning/rejection.", userCount: 28, badgeVariant: "warning" },
   [Role.DSA]: { title: "DSA Partner", desc: "Direct Selling Agent portal access for application sourcing, document upload, status tracking, and commission payouts.", userCount: 142, badgeVariant: "neutral" },
   [Role.CONNECTOR]: { title: "Connector", desc: "Freelance referral partners submitting prospective customer leads with automated referral tracking.", userCount: 86, badgeVariant: "neutral" },
   [Role.STAFF]: { title: "Operations Staff", desc: "Front-desk and back-office credit operations, document validation, CRM tele-calling, and verification coordination.", userCount: 64, badgeVariant: "success" },
   [Role.CUSTOMER]: { title: "Customer Portal", desc: "Borrower self-service portal for loan tracking, EMI schedule, document uploads, and NOC downloads.", userCount: 1840, badgeVariant: "neutral" },
 };
+
 
 export const RolesPermissionsFeature: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<Role>(Role.SUPER_ADMIN);

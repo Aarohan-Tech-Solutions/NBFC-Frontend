@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  nbfc-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nbfc-3panel-frontend
+    ports:
+      - "3000:3000" # Admin & DSA Panel
+      - "3001:3001" # Customer Portal
+      - "3002:3002" # Bank & Underwriting Officials Portal
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

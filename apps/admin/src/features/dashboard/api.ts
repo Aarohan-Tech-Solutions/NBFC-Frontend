@@ -1,13 +1,7 @@
-import { adminApiClient } from "../../lib/apiClient";
+import { reportsApi, DashboardStats } from "@nbfc/api-client";
 
-export interface DashboardStats {
-  totalLoans: number;
-  activeDisbursements: number;
-  totalDSA: number;
-  pendingVerifications: number;
-}
+export type { DashboardStats };
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
-  const { data } = await adminApiClient.get<DashboardStats>("/dashboard/stats");
-  return data;
+  return reportsApi.getDashboardStats();
 }

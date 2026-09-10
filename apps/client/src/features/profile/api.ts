@@ -1,7 +1,6 @@
-import { clientPortalApiClient } from "../../lib/apiClient";
+import { customersApi } from "@nbfc/api-client";
 import { Customer } from "@nbfc/shared-types";
 
 export async function fetchCustomerProfile(): Promise<Customer> {
-  const { data } = await clientPortalApiClient.get<Customer>("/customer/profile");
-  return data;
+  return customersApi.getProfile();
 }

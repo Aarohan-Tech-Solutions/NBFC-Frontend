@@ -1,6 +1,5 @@
-import { clientPortalApiClient } from "../../lib/apiClient";
+import { customersApi } from "@nbfc/api-client";
 
 export async function fetchCustomerDashboard() {
-  const { data } = await clientPortalApiClient.get("/customer/dashboard");
-  return data;
+  return customersApi.getDashboardStats();
 }

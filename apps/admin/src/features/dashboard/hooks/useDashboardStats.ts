@@ -1,18 +1,23 @@
 import { useState, useEffect } from "react";
-import { DashboardStats } from "../api";
+import { fetchDashboardStats, DashboardStats } from "../api";
 
 export function useDashboardStats() {
   const [stats, setStats] = useState<DashboardStats>({
-    totalLoans: 1420,
-    activeDisbursements: 85000000,
-    totalDSA: 340,
-    pendingVerifications: 28,
+    totalDisbursedMonth: 48500000,
+    activeApplicationsCount: 18,
+    totalDSAPartners: 34,
+    averageTATDays: 3.2,
+    monthlyRevenue: 3840000,
+    rejectionRatePercent: 6.8,
+    slaBreachCount: 2,
   });
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Placeholder hook logic
-    setIsLoading(false);
+    fetchDashboardStats().then((data) => {
+      if (data) setStats(data);
+      setIsLoading(false);
+    });
   }, []);
 
   return { stats, isLoading };

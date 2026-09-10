@@ -1,7 +1,6 @@
-import { clientPortalApiClient } from "../../lib/apiClient";
+import { loansApi } from "@nbfc/api-client";
 import { Loan } from "@nbfc/shared-types";
 
 export async function submitLoanApplication(payload: Partial<Loan>): Promise<Loan> {
-  const { data } = await clientPortalApiClient.post<Loan>("/loans/apply", payload);
-  return data;
+  return loansApi.createLoanApplication(payload);
 }
